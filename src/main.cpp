@@ -3,6 +3,8 @@
 #include<windows.h>
 using namespace std;
 
+测试
+
 extern "C"
 {
 	#include "lua.h"
@@ -115,6 +117,7 @@ int main(int argc, char* argv[])
 		lua_close(L);
 		return 0;
 	}
+
 	if(lua_isnumber(L, -1))        //取值输出
 	{
 		double fValue = lua_tonumber(L, -1);
