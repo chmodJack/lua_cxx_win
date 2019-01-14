@@ -3,8 +3,6 @@
 #include<windows.h>
 using namespace std;
 
-测试
-
 extern "C"
 {
 	#include "lua.h"
@@ -12,6 +10,7 @@ extern "C"
 	#include "lualib.h"
 }
 
+#define FILE_OR_STRING 1
 
 const char source_code[] =
 "str=\"I am so cool\" \
@@ -32,7 +31,6 @@ int cxx_func(lua_State* L)
 {
 	/* 得到参数个数 */
 	int n = lua_gettop(L);
-
 	double sum = 0;
 	/* 循环求参数之和 */
 	for(int i = 1; i <= n; i++)
@@ -48,6 +46,7 @@ int cxx_func(lua_State* L)
 	/* 返回返回值的个数 */
 	return 2;
 }
+
 int cxx_print_num(lua_State* L)
 {
 	printf("hello, this is func: %s, file: %s, line: %d\n", __func__, __FILE__, __LINE__);
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
 	lua_register(L, "cxx_print_num", cxx_print_num);
 
 	//2.加载lua文件
-	#if 1
+	#if FILE_OR_STRING
 	int bRet = luaL_loadfile(L, "./src/hello.lua");
 	#else
 	int bRet = luaL_loadstring(L, source_code);
@@ -97,15 +96,15 @@ int main(int argc, char* argv[])
 	//4.读取变量
 	lua_getglobal(L, "str");
 	string str = lua_tostring(L, -1);
-	cout << "str = " << str.c_str() << endl;		//str = I am so cool~
+	cout << "str = " << str.c_str() << endl;//str = I am so cool~
 
-													//5.读取table
+	//5.读取table
 	lua_getglobal(L, "tbl");
 	lua_getfield(L, -1, "name");
 	str = lua_tostring(L, -1);
 	cout << "tbl:name = " << str.c_str() << endl; //tbl:name = shun
 
-												  //6.读取函数
+	//6.读取函数
 	lua_getglobal(L, "add");		// 获取函数，压入栈中
 	lua_pushnumber(L, 10);			// 压入第一个参数
 	lua_pushnumber(L, 20);			// 压入第二个参数
@@ -124,13 +123,7 @@ int main(int argc, char* argv[])
 		cout << "Result is " << fValue << endl;
 	}
 
-	while(1)
-	{
-		lua_getglobal(L, "all");
-		lua_pcall(L, 0, 0, 0);
-		Sleep(1000);
-	}
-
+	
 	//至此，栈中的情况是：
 	//=================== 栈顶 =================== 
 	//  索引  类型      值
@@ -139,6 +132,14 @@ int main(int argc, char* argv[])
 	//	 2	 table:		tbl
 	//   1   string:	I am so cool~
 	//=================== 栈底 =================== 
+
+
+	while(1)
+	{
+		lua_getglobal(L, "all");
+		lua_pcall(L, 0, 0, 0);
+		Sleep(1000);
+	}
 
 	//7.关闭state
 	lua_close(L);
