@@ -10,23 +10,6 @@ extern "C"
 	#include "lualib.h"
 }
 
-#define FILE_OR_STRING 1
-
-const char source_code[] =
-"str=\"I am so cool\" \
-tbl = {name = \"shun\",id = 20114442} \
-function add(a, b) \
-return a + b \
-end \
-avg, sum = cxx_func(1, 3, 5, 7) \
-print(\"avg: \", avg) \
-print(\"sum: \", sum) \
-cxx_print_num(avg, sum) \
-function all() \
-cxx_print_num(avg + 3, sum + 3) \
-end";
-
-
 int cxx_func(lua_State* L)
 {
 	/* 得到参数个数 */
@@ -74,11 +57,7 @@ int main(int argc, char* argv[])
 	lua_register(L, "cxx_print_num", cxx_print_num);
 
 	//2.加载lua文件
-	#if FILE_OR_STRING
 	int bRet = luaL_loadfile(L, "./src/hello.lua");
-	#else
-	int bRet = luaL_loadstring(L, source_code);
-	#endif
 	if(bRet)
 	{
 		cout << "load file error" << endl;
