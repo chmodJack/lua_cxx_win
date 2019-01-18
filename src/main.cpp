@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <string.h>
-#include<windows.h>
+#include <windows.h>
 using namespace std;
 
 extern "C"
@@ -8,6 +8,7 @@ extern "C"
 	#include "lua.h"
 	#include "lauxlib.h"
 	#include "lualib.h"
+	//#include "lobject.h"
 }
 
 int cxx_func(lua_State* L)
@@ -42,6 +43,135 @@ int cxx_print_num(lua_State* L)
 	printf("\b\b.\n");
 	return 0;
 }
+
+namespace jack
+{
+	class lua
+	{
+	public:
+		lua(void)
+		{
+			L = luaL_newstate();
+			if(L == nullptr)
+			{ 
+				exit(-1);
+			}
+
+			luaL_openlibs(L);
+		}
+		~lua(void)
+		{
+			lua_close(L);
+			L = nullptr;
+		}
+
+		void register_cfunction(const char* name, lua_CFunction func)
+		{
+			lua_register(L, name, func);
+		}
+
+		int load_file(const char* file)
+		{
+			return luaL_loadfile(L, file);
+		}
+		int call(int nargs, int nresults, int errfunc)
+		{
+			return lua_pcall(L, nargs, nresults, errfunc);
+		}
+
+		int getglobal(const char* name)
+		{
+			return lua_getglobal(L, name);
+		}
+		int getfield(int idx, const char *k)
+		{
+			return lua_getfield(L, idx, k);
+		}
+
+		void pushnil(void)
+		{
+			lua_pushnil(L);
+		}
+		void pushnumber(lua_Number num)
+		{
+			lua_pushnumber(L, num);
+		}
+		void pushinteger(lua_Integer integer)
+		{
+			lua_pushinteger(L, integer);
+		}
+		const char* pushstring(const char* s)
+		{
+			return lua_pushstring(L, s);
+		}
+		
+		int iscfunction(int idx = -1)
+		{
+			return lua_iscfunction(L, idx);
+		}
+		int isinteger(int idx = -1)
+		{
+			return lua_isinteger(L, idx);
+		}
+		int isnumber(int idx = -1)
+		{
+			return lua_isnumber(L, idx);
+		}
+		int isstring(int idx = -1)
+		{
+			return lua_isstring(L, idx);
+		}
+		int isuserdata(int idx = -1)
+		{
+			return lua_isuserdata(L, idx);
+		}
+
+		lua_Number tonumber(int idx=-1)
+		{
+			return lua_tonumber(L, idx);
+		}
+		lua_Integer tointeger(int idx=-1)
+		{
+			return lua_tointeger(L, idx);
+		}
+		const char* tostring(int idx = -1)
+		{
+			return lua_tostring(L, idx);
+		}
+		lua_CFunction tocfunction(int idx = -1)
+		{
+			return lua_tocfunction(L, idx);
+		}
+		const void* topointer(int idx = -1)
+		{
+			return lua_topointer(L, idx);
+		}
+
+		static int lua_c_func_demo(lua_State* L)
+		{
+			int n = lua_gettop(L);
+			printf("Hello world! %d arguments input, \n", n);
+
+			for(int i = 1; i <= n; i++)
+			{
+				printf("	%lf\n", lua_tonumber(L, i));
+			}
+
+			printf("return 233 666\n");
+
+			lua_pushnumber(L, 233);
+			lua_pushnumber(L, 666);
+
+			//two return value
+			return 2;
+		}
+	public:
+		lua_State* L;
+	};
+}
+
+#define OLD 0
+#if OLD
 
 int main(int argc, char* argv[])
 {
@@ -113,3 +243,14 @@ int main(int argc, char* argv[])
 	lua_close(L);
 	return 0;
 }
+
+
+#else
+
+int main(int argc, char* argv[])
+{
+	jack::lua l;
+	return 0;
+}
+
+#endif
