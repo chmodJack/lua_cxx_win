@@ -8,7 +8,6 @@ extern "C"
 	#include "lua.h"
 	#include "lauxlib.h"
 	#include "lualib.h"
-	//#include "lobject.h"
 }
 
 namespace jack
@@ -34,12 +33,17 @@ namespace jack
 
 		void register_cfunction(const char* name, lua_CFunction func)
 		{
-			lua_register(L, name, func);
+			//lua_register(L, name, func);
+			(lua_pushcfunction(L, (func)), lua_setglobal(L, (name)));
 		}
 
 		int load_file(const char* file)
 		{
 			return luaL_loadfile(L, file);
+		}
+		int load_string(const char* s)
+		{
+			return luaL_loadstring(L, s);
 		}
 		int call(int nargs, int nresults, int errfunc)
 		{
@@ -226,6 +230,8 @@ int main(int argc, char* argv[])
 
 #else
 
+const char* code = "demo(1,22,333,4444)";
+
 int main(int argc, char* argv[])
 {
 	jack::lua l;
@@ -235,6 +241,7 @@ int main(int argc, char* argv[])
 	l.register_cfunction("msleep", l.msleep);
 
 	l.load_file("./src/main.lua");
+	//l.load_string(code);
 	l.call(0,0,0);
 
 	system("pause");
