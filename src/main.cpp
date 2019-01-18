@@ -242,7 +242,12 @@ int main(int argc, char* argv[])
 
 	l.load_file("./src/main.lua");
 	//l.load_string(code);
+	
 	l.call(0,0,0);
+
+	l.getglobal("test");
+	l.call(0, 1, 0);
+	cout << "--- " << l.tostring(-1) << endl;
 
 	system("pause");
 	return 0;
