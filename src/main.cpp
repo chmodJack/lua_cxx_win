@@ -11,39 +11,6 @@ extern "C"
 	//#include "lobject.h"
 }
 
-int cxx_func(lua_State* L)
-{
-	/* 得到参数个数 */
-	int n = lua_gettop(L);
-	double sum = 0;
-	/* 循环求参数之和 */
-	for(int i = 1; i <= n; i++)
-	{
-		//printf("i: %d -> v: %lf\n",i,lua_tonumber(L,i));
-		/* 求和 */
-		sum += lua_tonumber(L, i);
-	}
-	/* 压入平均值 */
-	lua_pushnumber(L, sum / n);
-	/* 压入和 */
-	lua_pushnumber(L, sum);
-	/* 返回返回值的个数 */
-	return 2;
-}
-
-int cxx_print_num(lua_State* L)
-{
-	printf("hello, this is func: %s, file: %s, line: %d\n", __func__, __FILE__, __LINE__);
-	int n = lua_gettop(L);
-
-	for(int i = 1; i <= n; i++)
-	{
-		printf("%lf, ", lua_tonumber(L, i));
-	}
-	printf("\b\b.\n");
-	return 0;
-}
-
 namespace jack
 {
 	class lua
@@ -147,24 +114,36 @@ namespace jack
 			return lua_topointer(L, idx);
 		}
 
-		static int lua_c_func_demo(lua_State* L)
+	public:
+		static int demo(lua_State* L)
 		{
 			int n = lua_gettop(L);
 			printf("Hello world! %d arguments input, \n", n);
 
 			for(int i = 1; i <= n; i++)
 			{
-				printf("	%lf\n", lua_tonumber(L, i));
+				printf("	%lld\n", lua_tointeger(L, i));
 			}
 
 			printf("return 233 666\n");
 
-			lua_pushnumber(L, 233);
-			lua_pushnumber(L, 666);
+			lua_pushinteger(L, 233);
+			lua_pushinteger(L, 666);
 
 			//two return value
 			return 2;
 		}
+		static int sleep(lua_State* L)
+		{
+			Sleep(lua_tointeger(L, -1) * 1000);
+			return 0;
+		}
+		static int msleep(lua_State* L)
+		{
+			Sleep(lua_tointeger(L, -1));
+			return 0;
+		}
+
 	public:
 		lua_State* L;
 	};
@@ -250,6 +229,15 @@ int main(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
 	jack::lua l;
+
+	l.register_cfunction("demo", l.demo);
+	l.register_cfunction("sleep", l.sleep);
+	l.register_cfunction("msleep", l.msleep);
+
+	l.load_file("./src/main.lua");
+	l.call(0,0,0);
+
+	system("pause");
 	return 0;
 }
 

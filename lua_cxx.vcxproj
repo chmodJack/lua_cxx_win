@@ -111,9 +111,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="src\hello.lua" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\lua_src\lapi.c" />
     <ClCompile Include="src\lua_src\lauxlib.c" />
     <ClCompile Include="src\lua_src\lbaselib.c" />
@@ -176,6 +173,9 @@
     <ClInclude Include="src\lua_src\lundump.h" />
     <ClInclude Include="src\lua_src\lvm.h" />
     <ClInclude Include="src\lua_src\lzio.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\main.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

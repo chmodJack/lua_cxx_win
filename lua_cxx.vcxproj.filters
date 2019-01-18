@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <None Include="src\hello.lua" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\lua_src\lapi.c">
       <Filter>lua_src</Filter>
@@ -189,5 +186,8 @@
     <Filter Include="lua_src">
       <UniqueIdentifier>{f43740b1-9582-4dd5-b99d-0c515458c7c6}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\main.lua" />
   </ItemGroup>
 </Project>
